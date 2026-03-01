@@ -78,124 +78,122 @@ struct ScreenLeaf: View {
     @State private var showCalendar = false
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.Cream
-                    .ignoresSafeArea()
-                
-                VStack(spacing: 0) {
-                    ScrollView(.vertical, showsIndicators: false) {
+        ZStack {
+            Color.Cream
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(spacing: 14) {
+                        // MARK: - Articles Section
+                        ForEach(articlesData) { article in
+                            NavigationLink(destination: ArticleDetailView(article: article)) {
+                                ArticleCard(
+                                    title: "\(article.title)",
+                                    subtitle: article.cardSubtitle,
+                                    thumbnailName: article.thumbnailName
+                                )
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                        
+                        // MARK: - Nervous System Care Section
                         VStack(spacing: 14) {
-                            // MARK: - Articles Section
-                            ForEach(articlesData) { article in
-                                NavigationLink(destination: ArticleDetailView(article: article)) {
-                                    ArticleCard(
-                                        title: "\(article.title)",
-                                        subtitle: article.cardSubtitle,
-                                        thumbnailName: article.thumbnailName
-                                    )
+                            Text("Nervous System Care")
+                                .font(Font.custom("Comfortaa", size: 24).weight(.medium))
+                                .foregroundColor(.Clay)
+                                .padding(.top, 20)
+                                .minimumScaleFactor(0.7)
+                            
+                            // How are you feeling today?
+                            VStack(alignment: .leading, spacing: 12) {
+                                HStack(alignment: .top) {
+                                    Text("How are you feeling today?")
+                                        .font(Font.custom("Comfortaa", size: 15).weight(.medium))
+                                        .foregroundColor(.Clay)
+                                    
+                                    Spacer()
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.Clay.opacity(0.6))
+                                        .font(.system(size: 14, weight: .semibold))
+                                }
+                                
+                                HStack(spacing: 12) {
+                                    ForEach(1...5, id: \.self) { mood in
+                                        Image("\(mood)")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 48, height: 48)
+                                            // Phase 1: fade out non-selected
+                                            .opacity(moodOpacity(for: mood))
+                                            // Phase 2+3: scale effects
+                                            .scaleEffect(moodScale(for: mood))
+                                            .animation(.easeInOut(duration: 0.3), value: moodAnimPhase)
+                                            .animation(.easeInOut(duration: 0.2), value: selectedMood)
+                                            .onTapGesture {
+                                                guard moodAnimPhase == 0 else { return }
+                                                startMoodAnimation(mood: mood)
+                                            }
+                                    }
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .animation(.easeInOut(duration: 0.3), value: moodAnimPhase)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(18)
+                            .background(Color.white.opacity(0.9))
+                            .cornerRadius(20)
+                            .onTapGesture {
+                                guard moodAnimPhase == 0 else { return }
+                                showCalendar = true
+                            }
+                            .padding(.horizontal, 14)
+                            
+                            // Calm Sounds & Guided Practices
+                            HStack(spacing: 12) {
+                                NavigationLink(destination: ScreenCalmSounds()) {
+                                    SmallCard(title: "Calm Sounds", 
+                                              isPlayable: true, 
+                                              isPlaying: soundStore.isPlaying,
+                                              currentSoundTitle: soundStore.currentSound?.title,
+                                              onPlay: {
+                                        soundStore.toggleRandom()
+                                    })
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                
+                                NavigationLink(destination: ScreenCalmRoutines()) {
+                                    SmallCard(title: "Calm Routines", iconName: "brain.head.profile")
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
-                            
-                            // MARK: - Nervous System Care Section
-                            VStack(spacing: 14) {
-                                Text("Nervous System Care")
-                                    .font(Font.custom("Comfortaa", size: 24).weight(.medium))
-                                    .foregroundColor(.Clay)
-                                    .padding(.top, 20)
-                                    .minimumScaleFactor(0.7)
-                                
-                                // How are you feeling today?
-                                VStack(alignment: .leading, spacing: 12) {
-                                    HStack(alignment: .top) {
-                                        Text("How are you feeling today?")
-                                            .font(Font.custom("Comfortaa", size: 15).weight(.medium))
-                                            .foregroundColor(.Clay)
-                                        
-                                        Spacer()
-                                        
-                                        Image(systemName: "chevron.right")
-                                            .foregroundColor(.Clay.opacity(0.6))
-                                            .font(.system(size: 14, weight: .semibold))
-                                    }
-                                    
-                                    HStack(spacing: 12) {
-                                        ForEach(1...5, id: \.self) { mood in
-                                            Image("\(mood)")
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(width: 48, height: 48)
-                                                // Phase 1: fade out non-selected
-                                                .opacity(moodOpacity(for: mood))
-                                                // Phase 2+3: scale effects
-                                                .scaleEffect(moodScale(for: mood))
-                                                .animation(.easeInOut(duration: 0.3), value: moodAnimPhase)
-                                                .animation(.easeInOut(duration: 0.2), value: selectedMood)
-                                                .onTapGesture {
-                                                    guard moodAnimPhase == 0 else { return }
-                                                    startMoodAnimation(mood: mood)
-                                                }
-                                        }
-                                    }
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .animation(.easeInOut(duration: 0.3), value: moodAnimPhase)
-                                }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(18)
-                                .background(Color.white.opacity(0.9))
-                                .cornerRadius(20)
-                                .onTapGesture {
-                                    guard moodAnimPhase == 0 else { return }
-                                    showCalendar = true
-                                }
-                                .padding(.horizontal, 14)
-                                
-                                // Calm Sounds & Guided Practices
-                                HStack(spacing: 12) {
-                                    NavigationLink(destination: ScreenCalmSounds()) {
-                                        SmallCard(title: "Calm Sounds", 
-                                                  isPlayable: true, 
-                                                  isPlaying: soundStore.isPlaying,
-                                                  currentSoundTitle: soundStore.currentSound?.title,
-                                                  onPlay: {
-                                            soundStore.toggleRandom()
-                                        })
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    
-                                    NavigationLink(destination: ScreenCalmRoutines()) {
-                                        SmallCard(title: "Calm Routines", iconName: "brain.head.profile")
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                                .padding(.horizontal, 14)
-                                .padding(.bottom, 15)
-                            }
-                            .background(Color.GlaciarBlue.opacity(0.5))
-                            .cornerRadius(30)
+                            .padding(.horizontal, 14)
+                            .padding(.bottom, 15)
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.top, 10)
-                        .padding(.bottom, 100)
+                        .background(Color.GlaciarBlue.opacity(0.5))
+                        .cornerRadius(30)
                     }
-                    
-                    Spacer(minLength: 0)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 10)
+                    .padding(.bottom, 100)
                 }
                 
-                // Tab Bar
-                VStack {
-                    Spacer()
-                    CustomTabBar(selectedTab: $selectedTab)
-                        .padding(.bottom, 8)
-                }
+                Spacer(minLength: 0)
             }
-            .navigationDestination(isPresented: $showCalendar) {
-                MoodCalendarView(moodStore: moodStore)
+            
+            // Tab Bar
+            VStack {
+                Spacer()
+                CustomTabBar(selectedTab: $selectedTab)
+                    .padding(.bottom, 8)
             }
-            .onDisappear {
-                soundStore.stop()
-            }
+        }
+        .navigationDestination(isPresented: $showCalendar) {
+            MoodCalendarView(moodStore: moodStore)
+        }
+        .onDisappear {
+            soundStore.stop()
         }
     }
     

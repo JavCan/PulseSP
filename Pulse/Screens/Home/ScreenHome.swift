@@ -22,13 +22,12 @@ struct ScreenHome: View {
     let imageHeight: CGFloat = 300
     
     var body: some View {
-        ZStack {
-            // Fondo base
-            Color.Cream
-                .ignoresSafeArea()
-            
-            switch selectedTab {
-            case .home:
+        NavigationStack {
+            ZStack {
+                // Fondo base
+                Color.Cream
+                    .ignoresSafeArea()
+                
                 VStack {
                     // Affirmation Card
                     VStack(spacing: 20) {
@@ -111,30 +110,32 @@ struct ScreenHome: View {
                         .opacity(isExpanding ? 0 : 1)
                 }
                 
-            case .breathe:
+                if showRelaxationScreen {
+                    ScreenRelaxation(onDismiss: {
+                        withAnimation(.easeInOut(duration: 0.8)) {
+                            showRelaxationScreen = false
+                            isExpanding = false
+                        }
+                    })
+                    .transition(.opacity)
+                    .zIndex(20)
+                    .ignoresSafeArea()
+                }
+            }
+            .navigationDestination(isPresented: Binding(
+                get: { selectedTab == .breathe },
+                set: { if !$0 { selectedTab = .home } }
+            )) {
                 ScreenLeaf(selectedTab: $selectedTab)
+                    .navigationBarBackButtonHidden(true)
             }
-            
-            if showRelaxationScreen {
-                ScreenRelaxation(onDismiss: {
-                    withAnimation(.easeInOut(duration: 0.8)) {
-                        showRelaxationScreen = false
-                        isExpanding = false
-                    }
-                })
-                .transition(.opacity)
-                .zIndex(20)
-                .ignoresSafeArea()
+            .ignoresSafeArea(isExpanding ? .all : [])
+            .onAppear {
+                if dailyAffirmation.isEmpty{
+                    dailyAffirmation = affirmations.randomElement() ?? affirmations [0]
+                }
             }
         }
-        .ignoresSafeArea(isExpanding ? .all : [])
-        .onAppear {
-            if dailyAffirmation.isEmpty{
-                dailyAffirmation = affirmations.randomElement() ?? affirmations [0]
-            }
-        }
-        
-        
     }
     
 

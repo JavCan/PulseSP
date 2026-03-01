@@ -36,7 +36,7 @@ struct OnboardingView: View {
                     Spacer()
                     if currentPage < pages.count - 1 {
                         Button(action: {
-                            withAnimation(.easeInOut(duration: 0.6)) { hasSeenOnboarding = true }
+                            withAnimation { hasSeenOnboarding = true }
                         }) {
                             Text("Skip")
                                 .font(Font.custom("Comfortaa", size: 15).weight(.medium))
@@ -51,62 +51,66 @@ struct OnboardingView: View {
                 
                 Spacer()
                 
-                // Page content with fade transition
+                // Page content
                 ZStack {
                     ForEach(Array(pages.enumerated()), id: \.offset) { index, page in
-                        VStack(spacing: 36) {
-                            // Icon with gradient circle background
-                            ZStack {
-                                Circle()
-                                    .fill(
-                                        LinearGradient(
-                                            colors: page.iconGradient.map { $0.opacity(0.2) },
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
+                        if index == currentPage {
+                            VStack(spacing: 36) {
+                                // Icon with gradient circle background
+                                ZStack {
+                                    Circle()
+                                        .fill(
+                                            LinearGradient(
+                                                colors: page.iconGradient.map { $0.opacity(0.2) },
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            )
                                         )
-                                    )
-                                    .frame(width: 180, height: 180)
+                                        .frame(width: 180, height: 180)
+                                    
+                                    Circle()
+                                        .fill(
+                                            LinearGradient(
+                                                colors: page.iconGradient.map { $0.opacity(0.35) },
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            )
+                                        )
+                                        .frame(width: 140, height: 140)
+                                    
+                                    Image(systemName: page.icon)
+                                        .font(.system(size: 56, weight: .light))
+                                        .foregroundStyle(
+                                            LinearGradient(
+                                                colors: page.iconGradient,
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            )
+                                        )
+                                }
                                 
-                                Circle()
-                                    .fill(
-                                        LinearGradient(
-                                            colors: page.iconGradient.map { $0.opacity(0.35) },
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        )
-                                    )
-                                    .frame(width: 140, height: 140)
-                                
-                                Image(systemName: page.icon)
-                                    .font(.system(size: 56, weight: .light))
-                                    .foregroundStyle(
-                                        LinearGradient(
-                                            colors: page.iconGradient,
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        )
-                                    )
+                                VStack(spacing: 16) {
+                                    Text(page.title)
+                                        .font(Font.custom("Comfortaa", size: 26).weight(.bold))
+                                        .foregroundColor(.Clay)
+                                        .multilineTextAlignment(.center)
+                                    
+                                    Text(page.description)
+                                        .font(Font.custom("Comfortaa", size: 15))
+                                        .foregroundColor(.Clay.opacity(0.7))
+                                        .multilineTextAlignment(.center)
+                                        .lineSpacing(6)
+                                        .padding(.horizontal, 40)
+                                }
                             }
-                            .scaleEffect(index == currentPage ? 1.0 : 0.85)
-                            
-                            VStack(spacing: 16) {
-                                Text(page.title)
-                                    .font(Font.custom("Comfortaa", size: 26).weight(.bold))
-                                    .foregroundColor(.Clay)
-                                    .multilineTextAlignment(.center)
-                                
-                                Text(page.description)
-                                    .font(Font.custom("Comfortaa", size: 15))
-                                    .foregroundColor(.Clay.opacity(0.7))
-                                    .multilineTextAlignment(.center)
-                                    .lineSpacing(6)
-                                    .padding(.horizontal, 40)
-                            }
+                            .transition(.asymmetric(
+                                insertion: .opacity.combined(with: .scale(scale: 0.95)).animation(.easeInOut(duration: 0.6)),
+                                removal: .opacity.animation(.easeInOut(duration: 0.4))
+                            ))
                         }
-                        .opacity(index == currentPage ? 1.0 : 0.0)
-                        .animation(.easeInOut(duration: 0.5), value: currentPage)
                     }
                 }
+                .frame(maxWidth: .infinity)
                 
                 Spacer()
                 
@@ -116,7 +120,7 @@ struct OnboardingView: View {
                         Circle()
                             .fill(index == currentPage ? Color.Clay : Color.Clay.opacity(0.25))
                             .frame(width: index == currentPage ? 10 : 7, height: index == currentPage ? 10 : 7)
-                            .animation(.easeInOut(duration: 0.3), value: currentPage)
+                            .animation(.easeInOut(duration: 0.2), value: currentPage)
                     }
                 }
                 .padding(.bottom, 30)
@@ -124,11 +128,11 @@ struct OnboardingView: View {
                 // Bottom button
                 Button(action: {
                     if currentPage < pages.count - 1 {
-                        withAnimation(.easeInOut(duration: 0.5)) {
+                        withAnimation(.easeInOut(duration: 0.6)) {
                             currentPage += 1
                         }
                     } else {
-                        withAnimation(.easeInOut(duration: 0.6)) { hasSeenOnboarding = true }
+                        withAnimation { hasSeenOnboarding = true }
                     }
                 }) {
                     Text(currentPage == pages.count - 1 ? "Get Started" : "Next")
@@ -150,7 +154,6 @@ struct OnboardingView: View {
             }
         }
     }
-
 }
 
 // MARK: - Data Model

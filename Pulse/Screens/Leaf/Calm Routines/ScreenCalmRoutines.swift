@@ -86,7 +86,6 @@ struct RoutineCard: View {
         case .sleep: return Color.white.opacity(0.6)
         }
     }
-    
     var body: some View {
         ZStack(alignment: .bottom) {
             // Background gradient

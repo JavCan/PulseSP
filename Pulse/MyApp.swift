@@ -17,16 +17,11 @@ struct MyApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ZStack {
-                if hasSeenOnboarding {
-                    ScreenHome()
-                        .transition(.opacity)
-                } else {
-                    OnboardingView()
-                        .transition(.opacity)
-                }
+            if hasSeenOnboarding {
+                ScreenHome()
+            } else {
+                OnboardingView()
             }
-            .animation(.easeInOut(duration: 0.6), value: hasSeenOnboarding)
         }
     }
 }
