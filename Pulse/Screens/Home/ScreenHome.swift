@@ -22,118 +22,124 @@ struct ScreenHome: View {
     let imageHeight: CGFloat = 300
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                // Fondo base
-                Color.Cream
-                    .ignoresSafeArea()
-                
-                VStack {
-                    // Affirmation Card
-                    VStack(spacing: 20) {
-                        Text("Today's Affirmation")
-                            .font(Font.custom("Comfortaa", size: 18).weight(.bold))
-                            .foregroundColor(.Clay)
-                        
-                        Text(dailyAffirmation)
-                            .font(Font.custom("Comfortaa", size: 16))
-                            .foregroundColor(.Clay)
-                            .multilineTextAlignment(.center)
-                            .lineSpacing(4)
-                            .lineLimit(2)
-                            .minimumScaleFactor(0.7)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 30)
-                    .padding(.horizontal, 20)
-                    .background(Color.PalidSand.opacity(0.8))
-                    .cornerRadius(30)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 10)
-                    .opacity(isExpanding ? 0 : 1)
+        ZStack { // Top-level ZStack to keep TabBar fixed
+            NavigationStack {
+                ZStack {
+                    // Fondo base
+                    Color.Cream
+                        .ignoresSafeArea()
                     
-                    Spacer()
-                    
-                    // Panic Attack button Section
-                    ZStack {
-                        Image("Feeling_Overwhelmed")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: imageWidth, height: imageHeight)
-                            .offset(y: -115)
-                            .opacity(isExpanding ? 0 : 1)
-                        
-                        ZStack {
-                            Circle()
-                                .fill(Color.GlaciarBlueOpacity)
-                                .frame(width: 257, height: 257)
-                                .scaleEffect(isExpanding ? 15 : 1)
-                                .animation(.easeInOut(duration: 2), value: isExpanding)
-                                .zIndex(isExpanding ? 10 : 0)
+                    VStack {
+                        // Affirmation Card
+                        VStack(spacing: 20) {
+                            Text("Today's Affirmation")
+                                .font(Font.custom("Comfortaa", size: 18).weight(.bold))
+                                .foregroundColor(.Clay)
                             
-                            Circle()
-                                .fill(Color.GlaciarBlue)
-                                .frame(width: 222, height: 222)
+                            Text(dailyAffirmation)
+                                .font(Font.custom("Comfortaa", size: 16))
+                                .foregroundColor(.Clay)
+                                .multilineTextAlignment(.center)
+                                .lineSpacing(4)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.7)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 30)
+                        .padding(.horizontal, 20)
+                        .background(Color.PalidSand.opacity(0.8))
+                        .cornerRadius(30)
+                        .padding(.horizontal, 20)
+                        .padding(.top, 10)
+                        .opacity(isExpanding ? 0 : 1)
+                        
+                        Spacer()
+                        
+                        // Panic Attack button Section
+                        ZStack {
+                            Image("Feeling_Overwhelmed")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: imageWidth, height: imageHeight)
+                                .offset(y: -115)
                                 .opacity(isExpanding ? 0 : 1)
-                                .zIndex(isExpanding ? 11 : 1)
-                                .onTapGesture {
-                                    withAnimation(.easeInOut(duration: 1.5)) {
-                                        isExpanding = true
-                                    }
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                        withAnimation(.none) {
-                                            showRelaxationScreen = true
+                            
+                            ZStack {
+                                Circle()
+                                    .fill(Color.GlaciarBlueOpacity)
+                                    .frame(width: 257, height: 257)
+                                    .scaleEffect(isExpanding ? 15 : 1)
+                                    .animation(.easeInOut(duration: 2), value: isExpanding)
+                                    .zIndex(isExpanding ? 10 : 0)
+                                
+                                Circle()
+                                    .fill(Color.GlaciarBlue)
+                                    .frame(width: 222, height: 222)
+                                    .opacity(isExpanding ? 0 : 1)
+                                    .zIndex(isExpanding ? 11 : 1)
+                                    .onTapGesture {
+                                        withAnimation(.easeInOut(duration: 1.5)) {
+                                            isExpanding = true
+                                        }
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                            withAnimation(.none) {
+                                                showRelaxationScreen = true
+                                            }
                                         }
                                     }
-                                }
+                            }
+                            .offset(y: 0)
                         }
-                        .offset(y: 0)
-                    }
-                    .zIndex(1)
-                    
-                    Group {
-                        Image(systemName: "arrow.up")
-                            .font(.system(size: 40, weight: .semibold, design: .rounded))
-                            .foregroundColor(Color.Clay)
+                        .zIndex(1)
                         
-                        Text("Press me!")
-                            .padding(.top, 15)
-                            .font(Font.custom("Comfortaa", size: 26).weight(.bold))
-                            .foregroundColor(.Clay)
-                    }
-                    .opacity(isExpanding ? 0 : 1)
-                    
-                    Spacer().frame(height: 80)
-                    
-                    CustomTabBar(selectedTab: $selectedTab)
-                        .padding(.bottom, 8)
-                        .opacity(isExpanding ? 0 : 1)
-                }
-                
-                if showRelaxationScreen {
-                    ScreenRelaxation(onDismiss: {
-                        withAnimation(.easeInOut(duration: 0.8)) {
-                            showRelaxationScreen = false
-                            isExpanding = false
+                        Group {
+                            Image(systemName: "arrow.up")
+                                .font(.system(size: 40, weight: .semibold, design: .rounded))
+                                .foregroundColor(Color.Clay)
+                            
+                            Text("Press me!")
+                                .padding(.top, 15)
+                                .font(Font.custom("Comfortaa", size: 26).weight(.bold))
+                                .foregroundColor(.Clay)
                         }
-                    })
-                    .transition(.opacity)
-                    .zIndex(20)
-                    .ignoresSafeArea()
+                        .opacity(isExpanding ? 0 : 1)
+                        
+                        Spacer().frame(height: 150)
+                    }
+                    
+                    if showRelaxationScreen {
+                        ScreenRelaxation(onDismiss: {
+                            withAnimation(.easeInOut(duration: 0.8)) {
+                                showRelaxationScreen = false
+                                isExpanding = false
+                            }
+                        })
+                        .transition(.opacity)
+                        .zIndex(20)
+                        .ignoresSafeArea()
+                    }
+                }
+                .navigationDestination(isPresented: Binding(
+                    get: { selectedTab == .breathe },
+                    set: { if !$0 { selectedTab = .home } }
+                )) {
+                    ScreenLeaf(selectedTab: $selectedTab)
+                        .navigationBarBackButtonHidden(true)
+                }
+                .ignoresSafeArea(isExpanding ? .all : [])
+                .onAppear {
+                    if dailyAffirmation.isEmpty{
+                        dailyAffirmation = affirmations.randomElement() ?? affirmations [0]
+                    }
                 }
             }
-            .navigationDestination(isPresented: Binding(
-                get: { selectedTab == .breathe },
-                set: { if !$0 { selectedTab = .home } }
-            )) {
-                ScreenLeaf(selectedTab: $selectedTab)
-                    .navigationBarBackButtonHidden(true)
-            }
-            .ignoresSafeArea(isExpanding ? .all : [])
-            .onAppear {
-                if dailyAffirmation.isEmpty{
-                    dailyAffirmation = affirmations.randomElement() ?? affirmations [0]
-                }
+            
+            // Persistent Tab Bar sits above the NavigationStack content
+            VStack {
+                Spacer()
+                CustomTabBar(selectedTab: $selectedTab)
+                    .padding(.bottom, 8)
+                    .opacity(isExpanding ? 0 : 1)
             }
         }
     }

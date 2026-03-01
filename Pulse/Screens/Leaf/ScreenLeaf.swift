@@ -178,15 +178,6 @@ struct ScreenLeaf: View {
                     .padding(.top, 10)
                     .padding(.bottom, 100)
                 }
-                
-                Spacer(minLength: 0)
-            }
-            
-            // Tab Bar
-            VStack {
-                Spacer()
-                CustomTabBar(selectedTab: $selectedTab)
-                    .padding(.bottom, 8)
             }
         }
         .navigationDestination(isPresented: $showCalendar) {
