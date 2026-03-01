@@ -293,8 +293,12 @@ struct ScreenRoutinePlayer: View {
             }
         }
         .navigationBarHidden(true)
-        .onAppear { startTimer() }
-        .onDisappear { stopTimer() }
+        .onAppear { 
+            startTimer() 
+        }
+        .onDisappear { 
+            stopTimer() 
+        }
     }
     
     // MARK: - Timer logic

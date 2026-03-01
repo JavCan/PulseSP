@@ -130,6 +130,7 @@ struct SoundCard: View {
     }
 }
 
+
 #Preview {
     ScreenCalmSounds()
 }

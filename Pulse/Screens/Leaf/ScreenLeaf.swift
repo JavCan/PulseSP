@@ -178,6 +178,10 @@ struct ScreenLeaf: View {
                     .padding(.top, 10)
                     .padding(.bottom, 150)
                 }
+                
+                // Local Tab Bar
+                CustomTabBar(selectedTab: $selectedTab)
+                    .padding(.bottom, 8)
             }
         }
         .navigationDestination(isPresented: $showCalendar) {
