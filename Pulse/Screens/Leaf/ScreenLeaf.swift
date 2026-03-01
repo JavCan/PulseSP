@@ -121,16 +121,16 @@ struct ScreenLeaf: View {
                                 
                                 HStack(spacing: 12) {
                                     ForEach(1...5, id: \.self) { mood in
-                                        Image("\(mood)")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 48, height: 48)
-                                            // Phase 1: fade out non-selected
-                                            .opacity(moodOpacity(for: mood))
-                                            // Phase 2+3: scale effects
-                                            .scaleEffect(moodScale(for: mood))
-                                            .animation(.easeInOut(duration: 0.3), value: moodAnimPhase)
-                                            .animation(.easeInOut(duration: 0.2), value: selectedMood)
+                                            Image("\(mood)")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 44, height: 44)
+                                                // Phase 1: fade out non-selected
+                                                .opacity(moodOpacity(for: mood))
+                                                // Phase 2+3: scale effects
+                                                .scaleEffect(moodScale(for: mood))
+                                                .animation(.easeInOut(duration: 0.3), value: moodAnimPhase)
+                                                .animation(.easeInOut(duration: 0.2), value: selectedMood)
                                             .onTapGesture {
                                                 guard moodAnimPhase == 0 else { return }
                                                 startMoodAnimation(mood: mood)
@@ -176,7 +176,7 @@ struct ScreenLeaf: View {
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 10)
-                    .padding(.bottom, 100)
+                    .padding(.bottom, 150)
                 }
             }
         }
@@ -459,7 +459,7 @@ struct SmallCard: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(height: 80)
+        .frame(height: 74)
         .padding(16)
         .background(Color.white.opacity(0.9))
         .cornerRadius(20)
